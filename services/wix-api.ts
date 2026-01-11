@@ -46,7 +46,9 @@ export const fetchServicesFromWix = async () => {
 export const wixRegister = async (email: string, password: string, role = 'Client') => {
   try {
     if (!wixFunctions) {
-      throw new Error('WIX_FUNCTIONS_BASE not configured');
+      const errorMsg = 'Wix configuration error: VITE_WIX_FUNCTIONS_BASE is not configured. Please check your .env.local file.';
+      console.error('❌', errorMsg);
+      throw new Error(errorMsg);
     }
 
     const res = await wixFunctions.post('/auth/register', {
@@ -57,8 +59,9 @@ export const wixRegister = async (email: string, password: string, role = 'Clien
 
     return res.data; // { token, contact, message }
   } catch (err: any) {
-    console.error('❌ Register error:', err.response?.data || err.message);
-    throw err?.response?.data || { error: err.message };
+    const errorMsg = err.response?.data?.error || err.message || 'Registration failed';
+    console.error('❌ Register error:', errorMsg);
+    throw { error: errorMsg };
   }
 };
 
@@ -69,7 +72,9 @@ export const wixRegister = async (email: string, password: string, role = 'Clien
 export const wixLogin = async (email: string, password: string) => {
   try {
     if (!wixFunctions) {
-      throw new Error('WIX_FUNCTIONS_BASE not configured');
+      const errorMsg = 'Wix configuration error: VITE_WIX_FUNCTIONS_BASE is not configured. Please check your .env.local file.';
+      console.error('❌', errorMsg);
+      throw new Error(errorMsg);
     }
 
     const res = await wixFunctions.post('/auth/login', {
@@ -79,8 +84,9 @@ export const wixLogin = async (email: string, password: string) => {
 
     return res.data; // { token, contact, message }
   } catch (err: any) {
-    console.error('❌ Login error:', err.response?.data || err.message);
-    throw err?.response?.data || { error: err.message };
+    const errorMsg = err.response?.data?.error || err.message || 'Login failed';
+    console.error('❌ Login error:', errorMsg);
+    throw { error: errorMsg };
   }
 };
 
