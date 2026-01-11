@@ -208,7 +208,14 @@ def register():
         new_user['id'] = str(len(USERS_DB) + 1)
         USERS_DB.append(new_user)
     
-    return jsonify({'message': 'New user created!'}), 201
+    # Generate token for new user
+    token = jwt.encode({
+        'email': new_user['email'],
+        'role': new_user.get('role', 'Client'),
+        'exp': datetime.utcnow() + timedelta(minutes=30)
+    }, app.config['SECRET_KEY'])
+    
+    return jsonify({'message': 'New user created!', 'token': token}), 201
 
 @app.route('/api/auth/login', methods=['POST'])
 def login():
