@@ -2,15 +2,42 @@ import os
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from dotenv import load_dotenv
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
+import jwt
+import bcrypt
+from functools import wraps
+from pymongo import MongoClient
+from pymongo.errors import PyMongoError
 
 load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
 
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-default-secret-key')
+
+# --- MongoDB setup ---
+MONGODB_URI = os.getenv(
+    'MONGODB_URI',
+    'mongodb+srv://lukeokagha_db_user:S5irpzuDutKWnFOu@ulysseswilliams.gamdqzp.mongodb.net/?retryWrites=true&w=majority'
+)
+try:
+    mongo_client = MongoClient(MONGODB_URI, serverSelectionTimeoutMS=5000)
+    db = mongo_client.get_database(os.getenv('MONGODB_DB', 'ulysse_cms'))
+    users_collection = db['users']
+    # Ensure email index for fast lookups
+    users_collection.create_index('email', unique=True)
+    print("Connected to MongoDB")
+except PyMongoError as e:
+    print(f"MongoDB connection error: {e}")
+    mongo_client = None
+    users_collection = None
+# --- end MongoDB setup ---
+
 # Mock database - in production, use a real database
+USERS_DB = []
+
 SERVICES_DB = [
     {
         'id': 'advisory',
@@ -119,11 +146,104 @@ TEAM_DB = [
     }
 ]
 
+# Auth decorator
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = None
+        if 'x-access-token' in request.headers:
+            token = request.headers['x-access-token']
+        if not token:
+            return jsonify({'message' : 'Token is missing!'}), 401
+
+        try: 
+            data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+            # Prefer MongoDB users collection; fallback to in-memory USERS_DB
+            if users_collection:
+                current_user = users_collection.find_one({'email': data.get('email')})
+                if current_user and '_id' in current_user:
+                    current_user['id'] = str(current_user['_id'])
+            else:
+                current_user = next((user for user in USERS_DB if user['email'] == data.get('email')), None)
+        except Exception:
+            return jsonify({'message' : 'Token is invalid!'}), 401
+        return f(current_user, *args, **kwargs)
+    return decorated
+
 # Routes
 @app.route('/api/health', methods=['GET'])
 def health():
     """Health check endpoint"""
     return jsonify({'status': 'ok', 'timestamp': datetime.now().isoformat()})
+
+# Auth routes
+@app.route('/api/auth/register', methods=['POST'])
+def register():
+    """Register a new user"""
+    data = request.get_json()
+    if not data or not data.get('email') or not data.get('password'):
+        return jsonify({'message': 'Email and password are required!'}), 400
+
+    # Check if user exists in MongoDB or USERS_DB
+    if users_collection:
+        if users_collection.find_one({'email': data['email']}):
+            return jsonify({'message': 'User already exists!'}), 409
+    else:
+        if any(user['email'] == data['email'] for user in USERS_DB):
+            return jsonify({'message': 'User already exists!'}), 409
+
+    hashed_password = bcrypt.hashpw(data['password'].encode('utf-8'), bcrypt.gensalt())
+    
+    new_user = {
+        'email': data['email'],
+        'password': hashed_password.decode('utf-8'),
+        'role': data.get('role', 'Client'), # Default role is Client
+        'created_at': datetime.utcnow()
+    }
+    
+    if users_collection:
+        result = users_collection.insert_one(new_user)
+        new_user['id'] = str(result.inserted_id)
+    else:
+        new_user['id'] = str(len(USERS_DB) + 1)
+        USERS_DB.append(new_user)
+    
+    return jsonify({'message': 'New user created!'}), 201
+
+@app.route('/api/auth/login', methods=['POST'])
+def login():
+    """Login a user"""
+    data = request.get_json()
+    if not data or not data.get('email') or not data.get('password'):
+        return jsonify({'message': 'Email and password are required'}), 400
+
+    # Look up user in MongoDB or USERS_DB
+    user = None
+    if users_collection:
+        user = users_collection.find_one({'email': data['email']})
+    else:
+        user = next((u for u in USERS_DB if u['email'] == data['email']), None)
+    
+    if not user:
+        return jsonify({'message': 'Invalid email or password'}), 401
+
+    if bcrypt.checkpw(data['password'].encode('utf-8'), user['password'].encode('utf-8')):
+        token = jwt.encode({
+            'email': user['email'],
+            'role': user.get('role', 'Client'),
+            'exp' : datetime.utcnow() + timedelta(minutes=30)
+        }, app.config['SECRET_KEY'])
+        return jsonify({'token' : token})
+
+    return jsonify({'message': 'Invalid email or password'}), 401
+
+@app.route('/api/me')
+@token_required
+def get_current_user(current_user):
+    """Get current user"""
+    if not current_user:
+        return jsonify({'error': 'User not found'}), 404
+    return jsonify(current_user)
 
 # Services endpoints
 @app.route('/api/services', methods=['GET'])
@@ -140,8 +260,11 @@ def get_service(service_id):
     return jsonify({'error': 'Service not found'}), 404
 
 @app.route('/api/services', methods=['POST'])
-def create_service():
+@token_required
+def create_service(current_user):
     """Create new service"""
+    if current_user['role'] != 'Admin':
+        return jsonify({'message': 'Cannot perform that function!'}), 403
     data = request.json
     new_service = {
         'id': data.get('id', f"service_{len(SERVICES_DB) + 1}"),
@@ -173,8 +296,11 @@ def get_insights_by_category(category):
     return jsonify(insights)
 
 @app.route('/api/insights', methods=['POST'])
-def create_insight():
+@token_required
+def create_insight(current_user):
     """Create new insight"""
+    if current_user['role'] != 'Admin':
+        return jsonify({'message': 'Cannot perform that function!'}), 403
     data = request.json
     new_insight = {
         'id': str(len(INSIGHTS_DB) + 1),

@@ -9,6 +9,22 @@ const api = axios.create({
   },
 });
 
+// Add a request interceptor to include the token in headers
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      // Ensure config.headers is not undefined before assigning
+      config.headers = config.headers ?? {};
+      config.headers['x-access-token'] = token;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 // Services API
 export const fetchServices = () => api.get('/services');
 export const fetchServiceById = (id: string) => api.get(`/services/${id}`);
@@ -33,6 +49,16 @@ export const fetchTeamMemberById = (id: string) => api.get(`/team/${id}`);
 
 // Contact API
 export const submitContactForm = (data: any) => api.post('/contact', data);
+
+// Authentication API
+export const login = (credentials: { email: string; password: string }) => 
+  api.post('/auth/login', credentials);
+
+export const register = (userData: { email: string; password: string; role?: string }) => 
+  api.post('/auth/register', userData);
+
+// Fetch current user (example of a protected route)
+export const getCurrentUser = () => api.get('/me');
 
 // CMS Content API
 export const fetchContent = (contentType: string) => 

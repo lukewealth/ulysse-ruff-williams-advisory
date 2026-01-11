@@ -35,22 +35,22 @@ const Footer: React.FC = () => {
           </div>
 
           <div className="space-y-6">
-            <h4 className="text-[10px] uppercase tracking-[0.3em] font-bold text-gold">Expertise</h4>
+            <h4 className="text-[10px] uppercase tracking-[0.3em] font-bold text-gold">Services</h4>
             <ul className="space-y-4 text-sm text-slate-400 font-light">
-              <li><a href="#" className="hover:text-white transition-colors">Blockchain Advisory</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Tokenization Strategy</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Infrastructure Audits</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Due Diligence</a></li>
+              <li><a href="/aml-sanctions" className="hover:text-white transition-colors">AML & Sanctions</a></li>
+              <li><a href="/blockchain-security" className="hover:text-white transition-colors">Blockchain Security</a></li>
+              <li><a href="/digital-assets" className="hover:text-white transition-colors">Digital Assets</a></li>
+              <li><a href="/mining-compliance" className="hover:text-white transition-colors">Mining Compliance</a></li>
             </ul>
           </div>
 
           <div className="space-y-6">
-            <h4 className="text-[10px] uppercase tracking-[0.3em] font-bold text-gold">Corporate</h4>
+            <h4 className="text-[10px] uppercase tracking-[0.3em] font-bold text-gold">Resources</h4>
             <ul className="space-y-4 text-sm text-slate-400 font-light">
-              <li><a href="#" className="hover:text-white transition-colors">About Strategy</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Insights & Archive</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Compliance Portal</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Contact Expert</a></li>
+              <li><a href="/expertise" className="hover:text-white transition-colors">Expertise</a></li>
+              <li><a href="/publications" className="hover:text-white transition-colors">Publications</a></li>
+              <li><a href="/portfolio" className="hover:text-white transition-colors">Case Studies</a></li>
+              <li><a href="/team" className="hover:text-white transition-colors">Our Team</a></li>
             </ul>
           </div>
 
