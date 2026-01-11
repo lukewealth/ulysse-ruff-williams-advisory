@@ -9,7 +9,6 @@ import { ok, badRequest, forbidden, serverError } from 'wix-http-functions';
 import wixUsers from 'wix-users-backend';
 import wixData from 'wix-data';
 import wixAuth from 'wix-auth';
-import { hashPassword, verifyPassword } from './password-utils';
 import jwt from 'jwt-simple';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
