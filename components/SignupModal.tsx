@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
+import { API_BASE_URL } from '../services/api';
 
 interface SignupModalProps {
   isOpen: boolean;
@@ -30,7 +31,7 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5000/register', {
+      const response = await fetch(`${API_BASE_URL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
