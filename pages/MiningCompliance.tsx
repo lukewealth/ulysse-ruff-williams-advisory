@@ -1,9 +1,13 @@
 
 import React from 'react';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 const MiningCompliance: React.FC = () => {
   return (
-    <div className="fade-in pb-32">
+    <div className="min-h-screen flex flex-col bg-white">
+      <Navbar />
+      <main className="flex-grow fade-in pb-32">
       <section className="py-24 bg-navy text-white">
         <div className="max-w-5xl mx-auto px-6">
           <h1 className="text-5xl font-serif mb-8">Crypto Mining & MaaS Compliance</h1>
@@ -108,6 +112,8 @@ const MiningCompliance: React.FC = () => {
           </div>
         </div>
       </section>
+      </main>
+      <Footer />
     </div>
   );
 };

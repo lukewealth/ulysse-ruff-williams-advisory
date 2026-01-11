@@ -1,6 +1,8 @@
 
 import React, { useState } from 'react';
 import AbstractPattern from '../components/AbstractPattern';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 const RegulatoryInsight: React.FC = () => {
   const [selectedBrief, setSelectedBrief] = useState<number | null>(null);
@@ -37,7 +39,9 @@ const RegulatoryInsight: React.FC = () => {
   ];
 
   return (
-    <div className="fade-in pb-32 relative">
+    <div className="min-h-screen flex flex-col bg-white">
+      <Navbar />
+      <main className="flex-grow fade-in pb-32 relative">
       <AbstractPattern className="inset-0" />
       <section className="py-24 border-b border-gray-200 bg-white relative">
         <div className="max-w-5xl mx-auto px-6">
@@ -86,6 +90,8 @@ const RegulatoryInsight: React.FC = () => {
           </div>
         </div>
       </section>
+      </main>
+      <Footer />
     </div>
   );
 };

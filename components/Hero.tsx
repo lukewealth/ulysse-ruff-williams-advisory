@@ -2,7 +2,12 @@
 import React from 'react';
 import { ArrowRight, Globe, ChevronDown } from 'lucide-react';
 
-const Hero: React.FC = () => {
+interface HeroProps {
+  onLoginClick?: () => void;
+  onSignupClick?: () => void;
+}
+
+const Hero: React.FC<HeroProps> = ({ onLoginClick, onSignupClick }) => {
   return (
     <section className="relative min-h-screen flex items-center pt-20 overflow-hidden bg-white">
       {/* Background Decor */}
@@ -37,12 +42,18 @@ const Hero: React.FC = () => {
               </span>
               <div className="absolute inset-0 bg-gold translate-y-full group-hover:translate-y-0 transition-transform duration-300 -z-0" />
             </a>
-            <a 
-              href="#services" 
+            <button 
+              onClick={onSignupClick}
               className="text-navy font-bold uppercase tracking-widest text-xs hover:text-gold transition-colors py-4"
             >
-              View Expertise
-            </a>
+              Create Account
+            </button>
+            <button 
+              onClick={onLoginClick}
+              className="text-navy font-bold uppercase tracking-widest text-xs hover:text-gold transition-colors py-4"
+            >
+              Login
+            </button>
           </div>
 
           <div className="flex items-center space-x-8 pt-12 border-t border-slate-100 max-w-sm">

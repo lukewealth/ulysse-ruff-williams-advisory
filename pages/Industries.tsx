@@ -1,5 +1,7 @@
 
 import React, { useState } from 'react';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 const Industries: React.FC = () => {
   const [activeTab, setActiveTab] = useState<number | null>(0);
@@ -32,7 +34,9 @@ const Industries: React.FC = () => {
   ];
 
   return (
-    <div className="fade-in pb-32">
+    <div className="min-h-screen flex flex-col bg-white">
+      <Navbar />
+      <main className="flex-grow fade-in pb-32">
       <section className="py-24 bg-offwhite border-b border-gray-200">
         <div className="max-w-5xl mx-auto px-6 text-center">
           <h1 className="text-5xl font-serif text-navy mb-8">Industries Served</h1>
@@ -77,6 +81,8 @@ const Industries: React.FC = () => {
           ))}
         </div>
       </section>
+      </main>
+      <Footer />
     </div>
   );
 };

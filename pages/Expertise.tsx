@@ -2,6 +2,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import AbstractPattern from '../components/AbstractPattern';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 const Expertise: React.FC = () => {
   const practices = [
@@ -28,7 +30,9 @@ const Expertise: React.FC = () => {
   ];
 
   return (
-    <div className="fade-in pb-32 relative">
+    <div className="min-h-screen flex flex-col bg-white">
+      <Navbar />
+      <main className="flex-grow fade-in pb-32 relative">
       <AbstractPattern className="inset-0" />
       
       <section className="py-24 bg-offwhite border-b border-gray-200 relative">
@@ -59,6 +63,8 @@ const Expertise: React.FC = () => {
           ))}
         </div>
       </section>
+      </main>
+      <Footer />
     </div>
   );
 };
