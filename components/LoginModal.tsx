@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
-import { API_BASE_URL } from '../services/api';
+import { wixLogin } from '../services/wix-api';
 import { useToast } from './ToastProvider';
 
 interface LoginModalProps {
@@ -23,26 +23,23 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
     showToast('🔐 Logging in...', 'info');
 
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
+      const data = await wixLogin(email, password);
 
-      const data = await response.json();
-
-      if (response.ok) {
-        console.log('✅ Login successful');
+      if (data?.token) {
+        console.log('✅ Login successful (token received)');
         showToast('Welcome back! Redirecting...', 'success', 2000);
         localStorage.setItem('token', data.token);
         onClose();
-        // Redirect to dashboard
-        setTimeout(() => {
-          window.location.href = '/client/dashboard';
-        }, 500);
+        setTimeout(() => (window.location.href = '/dashboard'), 500);
+      } else if (data?.contact) {
+        // Contact found but no token — recommend server-side auth (Velo).
+        const msg = 'Account found. Please use site login (server-side auth required).';
+        console.warn('⚠️', msg);
+        setError(msg);
+        showToast(msg, 'warning');
       } else {
-        console.warn('❌ Login failed:', data.message);
-        const message = data.message || 'Login failed. Please try again.';
+        const message = data?.error || 'Login failed. Please try again.';
+        console.warn('❌ Login failed:', message);
         setError(message);
         showToast(message, 'error');
       }

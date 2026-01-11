@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
-import { API_BASE_URL } from '../services/api';
+import { wixRegister } from '../services/wix-api';
 import { useToast } from './ToastProvider';
 
 interface SignupModalProps {
@@ -41,26 +41,23 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
     setLoading(true);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
+      const data = await wixRegister(email, password);
 
-      const data = await response.json();
-
-      if (response.ok) {
+      if (data?.token) {
         console.log('✅ Account created successfully');
         showToast('Account created! Welcome aboard! 🎉', 'success', 2000);
         localStorage.setItem('token', data.token);
         onClose();
-        // Redirect to dashboard
-        setTimeout(() => {
-          window.location.href = '/client/dashboard';
-        }, 500);
+        setTimeout(() => (window.location.href = '/dashboard'), 500);
+      } else if (data?._id || data?.id) {
+        // Wix contact created; token issuance should be done server-side (Velo) ideally
+        const msg = 'Account created. Please complete verification via email if required.';
+        console.log('ℹ️', msg);
+        showToast(msg, 'success', 2000);
+        onClose();
       } else {
-        console.warn('❌ Signup failed:', data.message);
-        const message = data.message || 'Registration failed. Please try again.';
+        const message = data?.error || 'Registration failed. Please try again.';
+        console.warn('❌ Signup failed:', message);
         setError(message);
         showToast(message, 'error');
       }
