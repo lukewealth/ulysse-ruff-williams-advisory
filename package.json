@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.18",
+    "@wix/data": "^1.0.373",
+    "@wix/sdk": "^1.21.2",
     "axios": "^1.6.2",
     "lucide-react": "^0.562.0",
     "react": "^19.2.3",

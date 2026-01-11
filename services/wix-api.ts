@@ -1,7 +1,10 @@
 import axios from 'axios';
+import { items } from '@wix/data';
+import { createClient, OAuthStrategy } from '@wix/sdk';
 
 export const WIX_BASE_URL = import.meta.env.VITE_WIX_API_BASE_URL || 'https://www.wixapis.com/v1';
 export const WIX_API_KEY = import.meta.env.VITE_WIX_API_KEY || '';
+export const WIX_CLIENT_ID = import.meta.env.VITE_WIX_CLIENT_ID || '';
 
 // Velo HTTP Functions base (e.g., https://ulysse-ruff-williams.wixsite.com/_functions)
 export const WIX_FUNCTIONS_BASE = import.meta.env.VITE_WIX_FUNCTIONS_BASE || '';
@@ -12,6 +15,12 @@ const wixApi = axios.create({
     'Content-Type': 'application/json',
     ...(WIX_API_KEY ? { Authorization: `Bearer ${WIX_API_KEY}` } : {}),
   },
+});
+
+// Wix SDK Client for direct API access (e.g., Data Collections)
+const myWixClient = createClient({
+  modules: { items },
+  auth: OAuthStrategy({ clientId: WIX_CLIENT_ID }),
 });
 
 // Velo functions client (recommended for auth flows)
@@ -33,6 +42,25 @@ export const fetchServicesFromWix = async () => {
     },
   });
   return res.data?.items ?? [];
+};
+
+/**
+ * Fetches items from a specified Wix Data Collection using the Wix SDK.
+ * @param dataCollectionId The ID of the data collection (e.g., "Members/Badges").
+ * @returns An array of items from the data collection.
+ */
+export const fetchWixDataCollectionItems = async (dataCollectionId: string) => {
+  try {
+    if (!WIX_CLIENT_ID) {
+      console.error('❌ Wix configuration error: VITE_WIX_CLIENT_ID is not configured. Please check your .env.local file.');
+      return [];
+    }
+    const dataItemsList = await myWixClient.items.query({ dataCollectionId }).find();
+    return dataItemsList.items;
+  } catch (err: any) {
+    console.error(`❌ Error fetching items from data collection ${dataCollectionId}:`, err);
+    return [];
+  }
 };
 
 // ============================================================================
@@ -130,3 +158,4 @@ export const proxyToVercel = async (
 };
 
 export default wixApi;
+
