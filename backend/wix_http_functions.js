@@ -273,24 +273,19 @@ export async function wixCrm_onContactDeleted(event) {
 }
 
 // ============================================================================
-// HELPER FUNCTIONS (Password hashing - implement via bcrypt library)
+// HELPER FUNCTIONS (Password hashing - stubs for Wix)
 // ============================================================================
 
-// Stub: Replace with actual bcrypt implementation
-const passwordUtils = {
-  async hashPassword(password) {
-    // In production, use: const bcrypt = require('bcryptjs');
-    // return bcrypt.hash(password, 10);
-    return password; // UNSAFE - placeholder only
-  },
+async function hashPassword(password) {
+  // In production, use: const bcrypt = require('bcryptjs');
+  // return bcrypt.hash(password, 10);
+  return password; // UNSAFE - placeholder only
+}
 
-  async verifyPassword(password, hash) {
-    // In production, use: return bcrypt.compare(password, hash);
-    return password === hash; // UNSAFE - placeholder only
-  }
-};
-
-export const { hashPassword, verifyPassword } = passwordUtils;
+async function verifyPassword(password, hash) {
+  // In production, use: return bcrypt.compare(password, hash);
+  return password === hash; // UNSAFE - placeholder only
+}
 
 // ============================================================================
 // EXPORTS FOR TEST/DOCUMENTATION
