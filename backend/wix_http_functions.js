@@ -16,6 +16,18 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 const VERCEL_API_URL = process.env.VERCEL_API_URL || 'https://your-vercel-domain.vercel.app';
 
 // ============================================================================
+// CORS Helper
+// ============================================================================
+function corsHeaders(origin) {
+  return {
+    'Access-Control-Allow-Origin': origin || '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Credentials': 'true'
+  };
+}
+
+// ============================================================================
 // HTTP FUNCTIONS (Public endpoints for frontend)
 // ============================================================================
 
@@ -25,11 +37,14 @@ const VERCEL_API_URL = process.env.VERCEL_API_URL || 'https://your-vercel-domain
  */
 export async function post_auth_register(request) {
   try {
+    const origin = request.headers.get('origin') || '*';
     const body = await request.body.json();
     const { email, password } = body;
 
     if (!email || !password) {
-      return badRequest({ error: 'Email and password required' });
+      return badRequest({ error: 'Email and password required' }, {
+        headers: corsHeaders(origin)
+      });
     }
 
     // Check if contact exists
@@ -38,7 +53,9 @@ export async function post_auth_register(request) {
       .find();
 
     if (existing.items.length > 0) {
-      return badRequest({ error: 'Email already registered' });
+      return badRequest({ error: 'Email already registered' }, {
+        headers: corsHeaders(origin)
+      });
     }
 
     // Hash password
@@ -66,18 +83,24 @@ export async function post_auth_register(request) {
       JWT_SECRET
     );
 
-    return ok({
-      message: 'User registered successfully',
-      token,
-      contact: {
-        id: contact._id,
-        email: contact.emails[0].email,
-        role: 'Client'
-      }
-    });
+    return ok(
+      {
+        message: 'User registered successfully',
+        token,
+        contact: {
+          id: contact._id,
+          email: contact.emails[0].email,
+          role: 'Client'
+        }
+      },
+      { headers: corsHeaders(origin) }
+    );
   } catch (error) {
     console.error('Register error:', error);
-    return serverError({ error: error.message });
+    const origin = request.headers.get('origin') || '*';
+    return serverError({ error: error.message }, {
+      headers: corsHeaders(origin)
+    });
   }
 }
 
@@ -87,11 +110,14 @@ export async function post_auth_register(request) {
  */
 export async function post_auth_login(request) {
   try {
+    const origin = request.headers.get('origin') || '*';
     const body = await request.body.json();
     const { email, password } = body;
 
     if (!email || !password) {
-      return badRequest({ error: 'Email and password required' });
+      return badRequest({ error: 'Email and password required' }, {
+        headers: corsHeaders(origin)
+      });
     }
 
     // Query contacts
@@ -100,7 +126,9 @@ export async function post_auth_login(request) {
       .find();
 
     if (contacts.items.length === 0) {
-      return badRequest({ error: 'Invalid credentials' });
+      return badRequest({ error: 'Invalid credentials' }, {
+        headers: corsHeaders(origin)
+      });
     }
 
     const contact = contacts.items[0];
@@ -112,7 +140,9 @@ export async function post_auth_login(request) {
     );
 
     if (!passwordMatch) {
-      return badRequest({ error: 'Invalid credentials' });
+      return badRequest({ error: 'Invalid credentials' }, {
+        headers: corsHeaders(origin)
+      });
     }
 
     // Generate JWT token
@@ -126,18 +156,24 @@ export async function post_auth_login(request) {
       JWT_SECRET
     );
 
-    return ok({
-      message: 'Login successful',
-      token,
-      contact: {
-        id: contact._id,
-        email: contact.emails[0].email,
-        role: contact.customFields?.['custom.role'] || 'Client'
-      }
-    });
+    return ok(
+      {
+        message: 'Login successful',
+        token,
+        contact: {
+          id: contact._id,
+          email: contact.emails[0].email,
+          role: contact.customFields?.['custom.role'] || 'Client'
+        }
+      },
+      { headers: corsHeaders(origin) }
+    );
   } catch (error) {
     console.error('Login error:', error);
-    return serverError({ error: error.message });
+    const origin = request.headers.get('origin') || '*';
+    return serverError({ error: error.message }, {
+      headers: corsHeaders(origin)
+    });
   }
 }
 
