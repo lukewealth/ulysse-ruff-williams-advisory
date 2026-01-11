@@ -15,6 +15,56 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 const VERCEL_API_URL = process.env.VERCEL_API_URL || 'https://your-vercel-domain.vercel.app';
 
 // ============================================================================
+// Rate Limiting Helper (In-memory tracking)
+// ============================================================================
+const rateLimitStore = {};
+const CLEANUP_INTERVAL = 60 * 60 * 1000; // Clean up every hour
+
+// Clean up old entries periodically
+setInterval(() => {
+  const now = Date.now();
+  for (const ip in rateLimitStore) {
+    rateLimitStore[ip] = rateLimitStore[ip].filter(timestamp => now - timestamp < 60 * 60 * 1000);
+    if (rateLimitStore[ip].length === 0) {
+      delete rateLimitStore[ip];
+    }
+  }
+}, CLEANUP_INTERVAL);
+
+/**
+ * Check if request exceeds rate limit
+ * Returns { allowed: boolean, remaining: number, resetTime: timestamp }
+ */
+function checkRateLimit(ip, limit, windowSeconds) {
+  const now = Date.now();
+  const windowMs = windowSeconds * 1000;
+  
+  if (!rateLimitStore[ip]) {
+    rateLimitStore[ip] = [];
+  }
+  
+  // Remove old entries outside the window
+  rateLimitStore[ip] = rateLimitStore[ip].filter(timestamp => now - timestamp < windowMs);
+  
+  const count = rateLimitStore[ip].length;
+  const allowed = count < limit;
+  
+  if (allowed) {
+    rateLimitStore[ip].push(now);
+  }
+  
+  const oldestEntry = rateLimitStore[ip][0];
+  const resetTime = oldestEntry ? oldestEntry + windowMs : now + windowMs;
+  
+  return {
+    allowed,
+    remaining: Math.max(0, limit - count),
+    resetTime,
+    retryAfter: Math.ceil((resetTime - now) / 1000)
+  };
+}
+
+// ============================================================================
 // CORS Helper
 // ============================================================================
 function corsHeaders(origin) {
@@ -51,16 +101,39 @@ export async function options_proxy(request) {
 /**
  * POST /_functions/auth/register
  * Register a new user (create Wix contact + issue JWT)
+ * Rate limited: 5 registrations per hour per IP
  */
 export async function post_auth_register(request) {
   try {
     const origin = request.headers.get('origin') || '*';
+    const clientIp = request.headers.get('x-forwarded-for')?.split(',')[0] || 'unknown';
+    
+    // Check rate limit: 5 registrations per hour
+    const rateLimit = checkRateLimit(clientIp, 5, 3600);
+    if (!rateLimit.allowed) {
+      const rateLimitHeaders = {
+        ...corsHeaders(origin),
+        'Retry-After': rateLimit.retryAfter.toString(),
+        'X-RateLimit-Remaining': '0'
+      };
+      return badRequest(
+        { 
+          error: 'Too many registration attempts. Please try again later.',
+          retryAfter: rateLimit.retryAfter
+        },
+        { headers: rateLimitHeaders }
+      );
+    }
+    
     const body = await request.body.json();
     const { email, password } = body;
 
     if (!email || !password) {
       return badRequest({ error: 'Email and password required' }, {
-        headers: corsHeaders(origin)
+        headers: {
+          ...corsHeaders(origin),
+          'X-RateLimit-Remaining': rateLimit.remaining.toString()
+        }
       });
     }
 
@@ -71,7 +144,10 @@ export async function post_auth_register(request) {
 
     if (existing.items.length > 0) {
       return badRequest({ error: 'Email already registered' }, {
-        headers: corsHeaders(origin)
+        headers: {
+          ...corsHeaders(origin),
+          'X-RateLimit-Remaining': rateLimit.remaining.toString()
+        }
       });
     }
 
@@ -124,16 +200,39 @@ export async function post_auth_register(request) {
 /**
  * POST /_functions/auth/login
  * Login user (verify password + issue JWT)
+ * Rate limited: 10 login attempts per hour per IP
  */
 export async function post_auth_login(request) {
   try {
     const origin = request.headers.get('origin') || '*';
+    const clientIp = request.headers.get('x-forwarded-for')?.split(',')[0] || 'unknown';
+    
+    // Check rate limit: 10 login attempts per hour
+    const rateLimit = checkRateLimit(clientIp, 10, 3600);
+    if (!rateLimit.allowed) {
+      const rateLimitHeaders = {
+        ...corsHeaders(origin),
+        'Retry-After': rateLimit.retryAfter.toString(),
+        'X-RateLimit-Remaining': '0'
+      };
+      return badRequest(
+        { 
+          error: 'Too many login attempts. Please try again later.',
+          retryAfter: rateLimit.retryAfter
+        },
+        { headers: rateLimitHeaders }
+      );
+    }
+    
     const body = await request.body.json();
     const { email, password } = body;
 
     if (!email || !password) {
       return badRequest({ error: 'Email and password required' }, {
-        headers: corsHeaders(origin)
+        headers: {
+          ...corsHeaders(origin),
+          'X-RateLimit-Remaining': rateLimit.remaining.toString()
+        }
       });
     }
 
@@ -144,7 +243,10 @@ export async function post_auth_login(request) {
 
     if (contacts.items.length === 0) {
       return badRequest({ error: 'Invalid credentials' }, {
-        headers: corsHeaders(origin)
+        headers: {
+          ...corsHeaders(origin),
+          'X-RateLimit-Remaining': rateLimit.remaining.toString()
+        }
       });
     }
 
@@ -158,7 +260,10 @@ export async function post_auth_login(request) {
 
     if (!passwordMatch) {
       return badRequest({ error: 'Invalid credentials' }, {
-        headers: corsHeaders(origin)
+        headers: {
+          ...corsHeaders(origin),
+          'X-RateLimit-Remaining': rateLimit.remaining.toString()
+        }
       });
     }
 
@@ -183,7 +288,12 @@ export async function post_auth_login(request) {
           role: contact.customFields?.['custom.role'] || 'Client'
         }
       },
-      { headers: corsHeaders(origin) }
+      {
+        headers: {
+          ...corsHeaders(origin),
+          'X-RateLimit-Remaining': rateLimit.remaining.toString()
+        }
+      }
     );
   } catch (error) {
     console.error('Login error:', error);

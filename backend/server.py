@@ -1,6 +1,8 @@
 import os
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
 import json
@@ -14,6 +16,14 @@ load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
+
+# Initialize rate limiter
+limiter = Limiter(
+    app=app,
+    key_func=get_remote_address,
+    default_limits=["200 per day", "50 per hour"],
+    storage_uri="memory://"
+)
 
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-default-secret-key')
 
@@ -178,8 +188,9 @@ def health():
 
 # Auth routes
 @app.route('/api/auth/register', methods=['POST'])
+@limiter.limit("5 per hour")
 def register():
-    """Register a new user"""
+    """Register a new user - Rate limited to 5 attempts per hour"""
     data = request.get_json()
     if not data or not data.get('email') or not data.get('password'):
         return jsonify({'message': 'Email and password are required!'}), 400
@@ -218,8 +229,9 @@ def register():
     return jsonify({'message': 'New user created!', 'token': token}), 201
 
 @app.route('/api/auth/login', methods=['POST'])
+@limiter.limit("10 per hour")
 def login():
-    """Login a user"""
+    """Login a user - Rate limited to 10 attempts per hour"""
     data = request.get_json()
     if not data or not data.get('email') or not data.get('password'):
         return jsonify({'message': 'Email and password are required'}), 400
