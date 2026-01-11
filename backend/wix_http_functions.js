@@ -31,6 +31,24 @@ function corsHeaders(origin) {
 // ============================================================================
 
 /**
+ * OPTIONS handler for CORS preflight requests
+ */
+export async function options_auth_register(request) {
+  const origin = request.headers.get('origin') || '*';
+  return ok({}, { headers: corsHeaders(origin) });
+}
+
+export async function options_auth_login(request) {
+  const origin = request.headers.get('origin') || '*';
+  return ok({}, { headers: corsHeaders(origin) });
+}
+
+export async function options_proxy(request) {
+  const origin = request.headers.get('origin') || '*';
+  return ok({}, { headers: corsHeaders(origin) });
+}
+
+/**
  * POST /_functions/auth/register
  * Register a new user (create Wix contact + issue JWT)
  */
@@ -182,9 +200,12 @@ export async function post_auth_login(request) {
  */
 export async function post_proxy(request) {
   try {
+    const origin = request.headers.get('origin') || '*';
     const auth = request.headers.authorization;
     if (!auth) {
-      return forbidden({ error: 'No authorization token' });
+      return forbidden({ error: 'No authorization token' }, {
+        headers: corsHeaders(origin)
+      });
     }
 
     const token = auth.replace('Bearer ', '');
@@ -194,7 +215,9 @@ export async function post_proxy(request) {
     try {
       decoded = jwt.decode(token, JWT_SECRET);
     } catch {
-      return forbidden({ error: 'Invalid or expired token' });
+      return forbidden({ error: 'Invalid or expired token' }, {
+        headers: corsHeaders(origin)
+      });
     }
 
     const body = await request.body.json();
@@ -213,13 +236,20 @@ export async function post_proxy(request) {
     const data = await response.json();
 
     if (!response.ok) {
-      return badRequest(data);
+      return badRequest(data, {
+        headers: corsHeaders(origin)
+      });
     }
 
-    return ok(data);
+    return ok(data, {
+      headers: corsHeaders(origin)
+    });
   } catch (error) {
     console.error('Proxy error:', error);
-    return serverError({ error: error.message });
+    const origin = request.headers.get('origin') || '*';
+    return serverError({ error: error.message }, {
+      headers: corsHeaders(origin)
+    });
   }
 }
 
