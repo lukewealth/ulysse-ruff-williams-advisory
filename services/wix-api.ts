@@ -63,6 +63,25 @@ export const fetchWixDataCollectionItems = async (dataCollectionId: string) => {
   }
 };
 
+/**
+ * Counts items from a specified Wix Data Collection using the Wix SDK.
+ * @param dataCollectionId The ID of the data collection (e.g., "Members/Badges").
+ * @returns The total count of items from the data collection.
+ */
+export const countWixDataCollectionItems = async (dataCollectionId: string) => {
+  try {
+    if (!WIX_CLIENT_ID) {
+      console.error('❌ Wix configuration error: VITE_WIX_CLIENT_ID is not configured. Please check your .env.local file.');
+      return 0; // Return 0 if client ID is not configured
+    }
+    const { totalCount } = await myWixClient.items.countDataItems({ dataCollectionId });
+    return totalCount;
+  } catch (err: any) {
+    console.error(`❌ Error counting items from data collection ${dataCollectionId}:`, err);
+    return 0; // Return 0 on error
+  }
+};
+
 // ============================================================================
 // Authentication (via Velo HTTP Functions - RECOMMENDED)
 // ============================================================================
