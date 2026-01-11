@@ -43,14 +43,20 @@ const Hero: React.FC<HeroProps> = ({ onLoginClick, onSignupClick }) => {
               <div className="absolute inset-0 bg-gold translate-y-full group-hover:translate-y-0 transition-transform duration-300 -z-0" />
             </a>
             <button 
-              onClick={onSignupClick}
-              className="text-navy font-bold uppercase tracking-widest text-xs hover:text-gold transition-colors py-4"
+              onClick={() => {
+                console.log('🔐 Opening login modal');
+                onSignupClick?.();
+              }}
+              className="text-navy font-bold uppercase tracking-widest text-xs hover:text-gold active:shadow-md active:shadow-gray-400/50 transition-all duration-200 py-4"
             >
               Create Account
             </button>
             <button 
-              onClick={onLoginClick}
-              className="text-navy font-bold uppercase tracking-widest text-xs hover:text-gold transition-colors py-4"
+              onClick={() => {
+                console.log('📝 Opening signup modal');
+                onLoginClick?.();
+              }}
+              className="text-navy font-bold uppercase tracking-widest text-xs hover:text-gold active:shadow-md active:shadow-gray-400/50 transition-all duration-200 py-4"
             >
               Login
             </button>

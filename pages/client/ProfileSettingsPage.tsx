@@ -93,7 +93,10 @@ const ProfileSettingsPage: React.FC = () => {
       {/* Tabs */}
       <div style={{ display: 'flex', gap: '0', marginBottom: '30px', borderBottom: '2px solid #e5e7eb' }}>
         <button
-          onClick={() => setActiveTab('profile')}
+          onClick={() => {
+            console.log('📋 Switching to Profile tab');
+            setActiveTab('profile');
+          }}
           style={{
             padding: '12px 24px',
             backgroundColor: activeTab === 'profile' ? '#C5A059' : 'transparent',
@@ -101,13 +104,18 @@ const ProfileSettingsPage: React.FC = () => {
             border: 'none',
             cursor: 'pointer',
             fontWeight: '600',
-            fontSize: '14px'
+            fontSize: '14px',
+            transition: 'all 0.2s ease',
+            boxShadow: activeTab === 'profile' ? '0 4px 12px rgba(128, 128, 128, 0.3)' : 'none'
           }}
         >
           Profile Information
         </button>
         <button
-          onClick={() => setActiveTab('password')}
+          onClick={() => {
+            console.log('🔐 Switching to Password tab');
+            setActiveTab('password');
+          }}
           style={{
             padding: '12px 24px',
             backgroundColor: activeTab === 'password' ? '#C5A059' : 'transparent',
@@ -115,13 +123,18 @@ const ProfileSettingsPage: React.FC = () => {
             border: 'none',
             cursor: 'pointer',
             fontWeight: '600',
-            fontSize: '14px'
+            fontSize: '14px',
+            transition: 'all 0.2s ease',
+            boxShadow: activeTab === 'password' ? '0 4px 12px rgba(128, 128, 128, 0.3)' : 'none'
           }}
         >
           Change Password
         </button>
         <button
-          onClick={() => setActiveTab('preferences')}
+          onClick={() => {
+            console.log('⚙️ Switching to Preferences tab');
+            setActiveTab('preferences');
+          }}
           style={{
             padding: '12px 24px',
             backgroundColor: activeTab === 'preferences' ? '#C5A059' : 'transparent',
@@ -129,7 +142,9 @@ const ProfileSettingsPage: React.FC = () => {
             border: 'none',
             cursor: 'pointer',
             fontWeight: '600',
-            fontSize: '14px'
+            fontSize: '14px',
+            transition: 'all 0.2s ease',
+            boxShadow: activeTab === 'preferences' ? '0 4px 12px rgba(128, 128, 128, 0.3)' : 'none'
           }}
         >
           Preferences
@@ -208,8 +223,14 @@ const ProfileSettingsPage: React.FC = () => {
               borderRadius: '4px',
               border: 'none',
               cursor: 'pointer',
-              fontWeight: '600'
-            }}>
+              fontWeight: '600',
+              transition: 'all 0.2s ease',
+              boxShadow: '0 4px 12px rgba(128, 128, 128, 0.2)'
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0 6px 16px rgba(128, 128, 128, 0.4)')}
+            onMouseLeave={(e) => (e.currentTarget.style.boxShadow = '0 4px 12px rgba(128, 128, 128, 0.2)')}
+            onMouseDown={(e) => (e.currentTarget.style.boxShadow = '0 2px 8px rgba(128, 128, 128, 0.5)')}
+            >
               Save Changes
             </button>
           </form>
@@ -263,8 +284,14 @@ const ProfileSettingsPage: React.FC = () => {
               borderRadius: '4px',
               border: 'none',
               cursor: 'pointer',
-              fontWeight: '600'
-            }}>
+              fontWeight: '600',
+              transition: 'all 0.2s ease',
+              boxShadow: '0 4px 12px rgba(128, 128, 128, 0.2)'
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0 6px 16px rgba(128, 128, 128, 0.4)')}
+            onMouseLeave={(e) => (e.currentTarget.style.boxShadow = '0 4px 12px rgba(128, 128, 128, 0.2)')}
+            onMouseDown={(e) => (e.currentTarget.style.boxShadow = '0 2px 8px rgba(128, 128, 128, 0.5)')}
+            >
               Update Password
             </button>
           </form>
@@ -332,8 +359,14 @@ const ProfileSettingsPage: React.FC = () => {
               borderRadius: '4px',
               border: 'none',
               cursor: 'pointer',
-              fontWeight: '600'
-            }}>
+              fontWeight: '600',
+              transition: 'all 0.2s ease',
+              boxShadow: '0 4px 12px rgba(128, 128, 128, 0.2)'
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0 6px 16px rgba(128, 128, 128, 0.4)')}
+            onMouseLeave={(e) => (e.currentTarget.style.boxShadow = '0 4px 12px rgba(128, 128, 128, 0.2)')}
+            onMouseDown={(e) => (e.currentTarget.style.boxShadow = '0 2px 8px rgba(128, 128, 128, 0.5)')}
+            >
               Save Preferences
             </button>
           </form>

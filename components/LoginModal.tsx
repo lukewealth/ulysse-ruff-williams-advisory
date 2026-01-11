@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import { API_BASE_URL } from '../services/api';
+import { useToast } from './ToastProvider';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -12,11 +13,14 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const { showToast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
+    console.log('🔐 Login attempt:', { email });
+    showToast('🔐 Logging in...', 'info');
 
     try {
       const response = await fetch(`${API_BASE_URL}/auth/login`, {
@@ -28,15 +32,25 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
       const data = await response.json();
 
       if (response.ok) {
+        console.log('✅ Login successful');
+        showToast('Welcome back! Redirecting...', 'success', 2000);
         localStorage.setItem('token', data.token);
         onClose();
         // Redirect to dashboard
-        window.location.href = '/client/dashboard';
+        setTimeout(() => {
+          window.location.href = '/client/dashboard';
+        }, 500);
       } else {
-        setError(data.message || 'Login failed');
+        console.warn('❌ Login failed:', data.message);
+        const message = data.message || 'Login failed. Please try again.';
+        setError(message);
+        showToast(message, 'error');
       }
     } catch (err) {
-      setError('An error occurred. Please try again.');
+      console.error('⚠️ Login error:', err);
+      const errorMsg = 'Connection error. Please try again.';
+      setError(errorMsg);
+      showToast(errorMsg, 'error');
     } finally {
       setLoading(false);
     }
@@ -51,7 +65,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
           <h2 className="text-2xl font-serif text-navy">Login</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-gray-400 hover:text-gray-600 transition-all duration-200 active:shadow-md active:shadow-gray-400/50"
           >
             <X className="w-6 h-6" />
           </button>
@@ -97,7 +111,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-6 px-6 py-3 bg-gold text-white font-semibold rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full mt-6 px-6 py-3 bg-gold text-white font-semibold rounded-lg hover:bg-amber-600 hover:shadow-lg hover:shadow-gray-400/40 active:shadow-md active:shadow-gray-500/50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Logging in...' : 'Login'}
           </button>

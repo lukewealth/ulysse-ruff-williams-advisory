@@ -12,17 +12,19 @@ const LoginPage: React.FC = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('🔐 Login attempt:', { email });
     setError('');
     setLoading(true);
     
     try {
       const response = await login({ email, password });
+      console.log('✅ Login successful');
       localStorage.setItem('token', response.data.token);
       navigate('/client/dashboard');
     } catch (err: any) {
       const errorMessage = err.response?.data?.message || 'Invalid email or password';
+      console.error('❌ Login failed:', errorMessage);
       setError(errorMessage);
-      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -69,8 +71,12 @@ const LoginPage: React.FC = () => {
             color: '#fff', 
             fontWeight: 'bold', 
             cursor: loading ? 'not-allowed' : 'pointer',
-            transition: 'background-color 0.3s'
+            transition: 'all 0.3s ease',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
           }}
+          onMouseEnter={(e) => !loading && (e.currentTarget.style.boxShadow = '0 6px 16px rgba(128, 128, 128, 0.4)')}
+          onMouseLeave={(e) => !loading && (e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)')}
+          onMouseDown={(e) => !loading && (e.currentTarget.style.boxShadow = '0 2px 8px rgba(128, 128, 128, 0.5)')}
         >
           {loading ? 'Logging in...' : 'Login'}
         </button>

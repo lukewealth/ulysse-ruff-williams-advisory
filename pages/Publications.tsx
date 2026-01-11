@@ -42,8 +42,8 @@ const Publications: React.FC = () => {
         <div className="max-w-5xl mx-auto px-6">
           <div className="flex items-center space-x-6 mb-16 border-b border-gray-200 pb-8">
             <span className="text-[10px] uppercase tracking-widest font-bold text-navy border-b-2 border-navy pb-8 -mb-8">All Publications</span>
-            <span className="text-[10px] uppercase tracking-widest font-bold text-slate/50 pb-8 -mb-8 cursor-pointer hover:text-navy transition-colors">White Papers</span>
-            <span className="text-[10px] uppercase tracking-widest font-bold text-slate/50 pb-8 -mb-8 cursor-pointer hover:text-navy transition-colors">Client Alerts</span>
+            <span onClick={() => console.log('📑 Filtering: White Papers')} className="text-[10px] uppercase tracking-widest font-bold text-slate/50 pb-8 -mb-8 cursor-pointer hover:text-gold hover:shadow-sm hover:shadow-gold/30 transition-all">White Papers</span>
+            <span onClick={() => console.log('🚨 Filtering: Client Alerts')} className="text-[10px] uppercase tracking-widest font-bold text-slate/50 pb-8 -mb-8 cursor-pointer hover:text-gold hover:shadow-sm hover:shadow-gold/30 transition-all">Client Alerts</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
@@ -54,7 +54,7 @@ const Publications: React.FC = () => {
                 <p className="text-sm text-slate/60 mb-8 leading-relaxed h-20 overflow-hidden">{pub.abstract}</p>
                 <div className="flex items-center justify-between border-t border-gray-100 pt-8">
                   <span className="text-[10px] uppercase tracking-widest font-bold text-steel">{pub.date}</span>
-                  <button className="flex items-center text-[10px] uppercase tracking-widest font-bold text-navy hover:text-gold">
+                  <button onClick={() => console.log(`📥 Downloading: ${pub.title}`)} className="flex items-center text-[10px] uppercase tracking-widest font-bold text-navy hover:text-gold hover:shadow-md hover:shadow-gold/40 transition-all">
                     <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                     Download PDF
                   </button>

@@ -50,13 +50,17 @@ const Expertise: React.FC = () => {
       <section className="mt-20 relative">
         <div className="max-w-5xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-12">
           {practices.map((p, idx) => (
-            <div key={idx} className="group p-10 border border-gray-100 bg-white hover:border-gold transition-all duration-500 shadow-sm hover:shadow-lg flex flex-col justify-between">
+            <div 
+              key={idx} 
+              onClick={() => console.log(`📚 Exploring: ${p.title}`)}
+              className="group p-10 border border-gray-100 bg-white hover:border-gold hover:shadow-xl hover:shadow-gold/20 transition-all duration-500 shadow-sm flex flex-col justify-between cursor-pointer"
+            >
               <div>
                 <span className="text-xs text-gold font-bold uppercase tracking-widest block mb-6">Practice {idx + 1}</span>
                 <h3 className="text-2xl font-serif text-navy mb-6 group-hover:text-gold transition-colors">{p.title}</h3>
                 <p className="text-slate/70 leading-relaxed mb-12 italic text-sm">{p.overview}</p>
               </div>
-              <Link to={p.path} className="text-[10px] uppercase tracking-widest font-bold text-navy group-hover:underline inline-flex items-center">
+              <Link to={p.path} className="text-[10px] uppercase tracking-widest font-bold text-navy hover:text-gold group-hover:underline inline-flex items-center transition-colors">
                 Explore Deep-Dive Practice <span className="ml-2">→</span>
               </Link>
             </div>

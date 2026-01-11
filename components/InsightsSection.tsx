@@ -81,7 +81,7 @@ const InsightsSection: React.FC = () => {
         </div>
 
         <div className="mt-20 text-center">
-          <button className="px-10 py-5 bg-navy text-white text-xs font-bold uppercase tracking-[0.2em] hover:bg-gold hover:text-navy hover:shadow-xl transition-all duration-300">
+          <button className="px-10 py-5 bg-navy text-white text-xs font-bold uppercase tracking-[0.2em] hover:bg-gold hover:text-navy hover:shadow-xl hover:shadow-gray-500/40 active:shadow-lg active:shadow-gray-600/50 transition-all duration-300">
             Access Full Knowledge Base
           </button>
         </div>

@@ -37,20 +37,20 @@ const Footer: React.FC = () => {
           <div className="space-y-6">
             <h4 className="text-[10px] uppercase tracking-[0.3em] font-bold text-gold">Services</h4>
             <ul className="space-y-4 text-sm text-slate-400 font-light">
-              <li><a href="/aml-sanctions" className="hover:text-white transition-colors">AML & Sanctions</a></li>
-              <li><a href="/blockchain-security" className="hover:text-white transition-colors">Blockchain Security</a></li>
-              <li><a href="/digital-assets" className="hover:text-white transition-colors">Digital Assets</a></li>
-              <li><a href="/mining-compliance" className="hover:text-white transition-colors">Mining Compliance</a></li>
+              <li><a href="/aml-sanctions" onClick={() => console.log('🔗 Footer: AML & Sanctions')} className="hover:text-gold hover:shadow-sm hover:shadow-gold/30 transition-all">AML & Sanctions</a></li>
+              <li><a href="/blockchain-security" onClick={() => console.log('🔗 Footer: Blockchain Security')} className="hover:text-gold hover:shadow-sm hover:shadow-gold/30 transition-all">Blockchain Security</a></li>
+              <li><a href="/digital-assets" onClick={() => console.log('🔗 Footer: Digital Assets')} className="hover:text-gold hover:shadow-sm hover:shadow-gold/30 transition-all">Digital Assets</a></li>
+              <li><a href="/mining-compliance" onClick={() => console.log('🔗 Footer: Mining Compliance')} className="hover:text-gold hover:shadow-sm hover:shadow-gold/30 transition-all">Mining Compliance</a></li>
             </ul>
           </div>
 
           <div className="space-y-6">
             <h4 className="text-[10px] uppercase tracking-[0.3em] font-bold text-gold">Resources</h4>
             <ul className="space-y-4 text-sm text-slate-400 font-light">
-              <li><a href="/expertise" className="hover:text-white transition-colors">Expertise</a></li>
-              <li><a href="/publications" className="hover:text-white transition-colors">Publications</a></li>
-              <li><a href="/portfolio" className="hover:text-white transition-colors">Case Studies</a></li>
-              <li><a href="/team" className="hover:text-white transition-colors">Our Team</a></li>
+              <li><a href="/expertise" onClick={() => console.log('🔗 Footer: Expertise')} className="hover:text-gold hover:shadow-sm hover:shadow-gold/30 transition-all">Expertise</a></li>
+              <li><a href="/publications" onClick={() => console.log('🔗 Footer: Publications')} className="hover:text-gold hover:shadow-sm hover:shadow-gold/30 transition-all">Publications</a></li>
+              <li><a href="/portfolio" onClick={() => console.log('🔗 Footer: Case Studies')} className="hover:text-gold hover:shadow-sm hover:shadow-gold/30 transition-all">Case Studies</a></li>
+              <li><a href="/team" onClick={() => console.log('🔗 Footer: Team')} className="hover:text-gold hover:shadow-sm hover:shadow-gold/30 transition-all">Our Team</a></li>
             </ul>
           </div>
 
@@ -63,7 +63,7 @@ const Footer: React.FC = () => {
                 placeholder="Institutional Email" 
                 className="bg-slate-900/50 border border-slate-800 px-4 py-3 text-xs w-full outline-none focus:border-gold"
               />
-              <button className="bg-gold text-navy p-3 hover:bg-white transition-colors">
+              <button className="bg-gold text-navy p-3 hover:bg-white hover:shadow-lg hover:shadow-gray-400/40 active:shadow-md active:shadow-gray-500/50 transition-all duration-200">
                 <ArrowUp className="w-4 h-4 rotate-45" />
               </button>
             </div>

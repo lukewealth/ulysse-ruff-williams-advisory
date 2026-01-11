@@ -89,8 +89,11 @@ const ContactSection: React.FC = () => {
                   Your strategy request has been logged. An analyst will review your requirements within 12 business hours.
                 </p>
                 <button 
-                  onClick={() => setFormStatus('idle')}
-                  className="text-xs font-bold uppercase tracking-widest text-gold hover:text-navy transition-colors"
+                  onClick={() => {
+                    console.log('📧 Resetting inquiry form');
+                    setFormStatus('idle');
+                  }}
+                  className="text-xs font-bold uppercase tracking-widest text-gold hover:text-navy hover:shadow-md hover:shadow-gray-400/50 active:shadow-md active:shadow-gray-500/50 transition-all duration-200"
                 >
                   Send Another Message
                 </button>
@@ -153,7 +156,7 @@ const ContactSection: React.FC = () => {
 
                 <button 
                   disabled={formStatus === 'submitting'}
-                  className="w-full py-5 bg-navy text-white text-xs font-bold uppercase tracking-[0.3em] rounded-sm hover:bg-gold hover:text-navy hover:shadow-xl transition-all duration-300 flex items-center justify-center space-x-3 disabled:opacity-50"
+                  className="w-full py-5 bg-navy text-white text-xs font-bold uppercase tracking-[0.3em] rounded-sm hover:bg-gold hover:text-navy hover:shadow-xl hover:shadow-gray-500/40 active:shadow-lg active:shadow-gray-600/50 transition-all duration-300 flex items-center justify-center space-x-3 disabled:opacity-50"
                 >
                   {formStatus === 'submitting' ? (
                     <span className="flex items-center space-x-2">

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import { API_BASE_URL } from '../services/api';
+import { useToast } from './ToastProvider';
 
 interface SignupModalProps {
   isOpen: boolean;
@@ -13,18 +14,27 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const { showToast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    console.log('📝 Signup attempt:', { email });
+    showToast('📝 Creating your account...', 'info');
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      console.warn('⚠️ Password mismatch');
+      const msg = 'Passwords do not match';
+      setError(msg);
+      showToast(msg, 'warning');
       return;
     }
 
     if (password.length < 8) {
-      setError('Password must be at least 8 characters');
+      console.warn('⚠️ Password too short');
+      const msg = 'Password must be at least 8 characters';
+      setError(msg);
+      showToast(msg, 'warning');
       return;
     }
 
@@ -40,15 +50,25 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
       const data = await response.json();
 
       if (response.ok) {
+        console.log('✅ Account created successfully');
+        showToast('Account created! Welcome aboard! 🎉', 'success', 2000);
         localStorage.setItem('token', data.token);
         onClose();
         // Redirect to dashboard
-        window.location.href = '/client/dashboard';
+        setTimeout(() => {
+          window.location.href = '/client/dashboard';
+        }, 500);
       } else {
-        setError(data.message || 'Registration failed');
+        console.warn('❌ Signup failed:', data.message);
+        const message = data.message || 'Registration failed. Please try again.';
+        setError(message);
+        showToast(message, 'error');
       }
     } catch (err) {
-      setError('An error occurred. Please try again.');
+      console.error('⚠️ Signup error:', err);
+      const errorMsg = 'Connection error. Please try again.';
+      setError(errorMsg);
+      showToast(errorMsg, 'error');
     } finally {
       setLoading(false);
     }
@@ -63,7 +83,7 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
           <h2 className="text-2xl font-serif text-navy">Create Account</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-gray-400 hover:text-gray-600 transition-all duration-200 active:shadow-md active:shadow-gray-400/50"
           >
             <X className="w-6 h-6" />
           </button>
@@ -125,7 +145,7 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-6 px-6 py-3 bg-gold text-white font-semibold rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full mt-6 px-6 py-3 bg-gold text-white font-semibold rounded-lg hover:bg-amber-600 hover:shadow-lg hover:shadow-gray-400/40 active:shadow-md active:shadow-gray-500/50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Creating Account...' : 'Sign Up'}
           </button>

@@ -35,12 +35,14 @@ import ProfileSettingsPage from './pages/client/ProfileSettingsPage';
 
 // Components
 import ProtectedRoute from './components/ProtectedRoute'; // New Import
+import ToastProvider from './components/ToastProvider';
 
 
 function App() {
   return (
-    <Router>
-      <Routes>
+    <ToastProvider>
+      <Router>
+        <Routes>
         {/* Existing Public Routes */}
         <Route path="/" element={<HomePage />} />
         <Route path="/services/:id" element={<ServiceDetailPage />} />
@@ -79,6 +81,7 @@ function App() {
         </Route>
       </Routes>
     </Router>
+    </ToastProvider>
   );
 }
 

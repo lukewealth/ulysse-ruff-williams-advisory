@@ -63,7 +63,7 @@ const ServicesSection: React.FC = () => {
               We provide comprehensive system validation for Tier 1 exchanges, family offices, and institutional investors.
             </p>
           </div>
-          <button className="px-10 py-4 border border-gold text-gold text-xs font-bold uppercase tracking-widest hover:bg-gold hover:text-navy transition-all">
+          <button className="px-10 py-4 border border-gold text-gold text-xs font-bold uppercase tracking-widest hover:bg-gold hover:text-navy hover:shadow-lg hover:shadow-gray-400/40 active:shadow-md active:shadow-gray-500/50 transition-all duration-200">
             Download Tech Specs
           </button>
         </div>

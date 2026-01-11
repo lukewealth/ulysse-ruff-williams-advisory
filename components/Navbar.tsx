@@ -55,8 +55,9 @@ const Navbar: React.FC = () => {
             <Link
               key={link.name}
               to={link.href}
-              className={`text-sm font-medium tracking-wide uppercase transition-colors duration-200 ${
-                isScrolled ? 'text-slate-300 hover:text-white' : 'text-navy/70 hover:text-navy'
+              onClick={() => console.log(`🔗 Navigating to ${link.name}`)}
+              className={`text-sm font-medium tracking-wide uppercase transition-all duration-200 ${
+                isScrolled ? 'text-slate-300 hover:text-gold hover:shadow-sm hover:shadow-gray-400/30' : 'text-navy/70 hover:text-gold hover:shadow-sm hover:shadow-gray-400/30'
               }`}
             >
               {link.name}
@@ -66,10 +67,13 @@ const Navbar: React.FC = () => {
           {/* Services Dropdown */}
           <div className="relative group">
             <button
-              className={`text-sm font-medium tracking-wide uppercase transition-colors duration-200 flex items-center space-x-1 ${
-                isScrolled ? 'text-slate-300 hover:text-white' : 'text-navy/70 hover:text-navy'
+              className={`text-sm font-medium tracking-wide uppercase transition-all duration-200 flex items-center space-x-1 active:shadow-md active:shadow-gray-400/50 ${
+                isScrolled ? 'text-slate-300 hover:text-gold hover:shadow-sm hover:shadow-gray-400/30' : 'text-navy/70 hover:text-gold hover:shadow-sm hover:shadow-gray-400/30'
               }`}
-              onMouseEnter={() => setIsServicesDropdownOpen(true)}
+              onMouseEnter={() => {
+                console.log('📂 Opening Services menu');
+                setIsServicesDropdownOpen(true);
+              }}
               onMouseLeave={() => setIsServicesDropdownOpen(false)}
             >
               <span>Services</span>
@@ -88,7 +92,8 @@ const Navbar: React.FC = () => {
                 <Link
                   key={service.name}
                   to={service.href}
-                  className="block px-4 py-3 text-sm font-medium hover:bg-gold hover:text-navy transition-colors first:rounded-t-md last:rounded-b-md"
+                  onClick={() => console.log(`🎯 Selected service: ${service.name}`)}
+                  className="block px-4 py-3 text-sm font-medium hover:bg-gold hover:text-navy hover:shadow-md transition-all first:rounded-t-md last:rounded-b-md"
                 >
                   {service.name}
                 </Link>

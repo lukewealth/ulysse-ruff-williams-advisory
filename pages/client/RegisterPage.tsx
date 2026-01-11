@@ -13,13 +13,16 @@ const RegisterPage: React.FC = () => {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('📝 Registration attempt:', { email });
     
     if (password !== confirmPassword) {
+      console.warn('⚠️ Password mismatch');
       setError('Passwords do not match');
       return;
     }
 
     if (password.length < 6) {
+      console.warn('⚠️ Password too short');
       setError('Password must be at least 6 characters');
       return;
     }
@@ -92,8 +95,12 @@ const RegisterPage: React.FC = () => {
             color: '#fff', 
             fontWeight: 'bold', 
             cursor: loading ? 'not-allowed' : 'pointer',
-            transition: 'background-color 0.3s'
+            transition: 'all 0.3s ease',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
           }}
+          onMouseEnter={(e) => !loading && (e.currentTarget.style.boxShadow = '0 6px 16px rgba(128, 128, 128, 0.4)')}
+          onMouseLeave={(e) => !loading && (e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)')}
+          onMouseDown={(e) => !loading && (e.currentTarget.style.boxShadow = '0 2px 8px rgba(128, 128, 128, 0.5)')}
         >
           {loading ? 'Creating Account...' : 'Register'}
         </button>

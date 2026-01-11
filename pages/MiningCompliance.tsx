@@ -103,7 +103,7 @@ const MiningCompliance: React.FC = () => {
                 </div>
                 <div className="p-8 border border-gray-200 text-center">
                   <p className="text-xs text-slate/50 mb-6 uppercase tracking-widest">Regulatory Readiness Audit</p>
-                  <button className="w-full bg-gold text-navy text-xs uppercase tracking-widest font-bold py-5 hover:bg-navy hover:text-white transition-all">
+                  <button onClick={() => console.log('📞 Requesting Mining Compliance consultation')} className="w-full bg-gold text-navy text-xs uppercase tracking-widest font-bold py-5 hover:bg-navy hover:text-white hover:shadow-lg hover:shadow-gray-400/40 active:shadow-md active:shadow-gray-500/50 transition-all">
                     Request Consultation
                   </button>
                 </div>

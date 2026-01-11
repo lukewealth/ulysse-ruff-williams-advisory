@@ -58,8 +58,11 @@ const RegulatoryInsight: React.FC = () => {
             {briefings.map((brief, idx) => (
               <div 
                 key={idx} 
-                className={`transition-all duration-500 border border-gray-100 p-10 bg-white ${selectedBrief === idx ? 'shadow-2xl border-gold' : 'shadow-sm hover:border-gold/30'}`}
-                onClick={() => setSelectedBrief(selectedBrief === idx ? null : idx)}
+                className={`transition-all duration-500 border border-gray-100 p-10 bg-white cursor-pointer ${selectedBrief === idx ? 'shadow-2xl border-gold' : 'shadow-sm hover:border-gold hover:shadow-lg hover:shadow-gold/20'}`}
+                onClick={() => {
+                  console.log(`📋 Briefing ${selectedBrief === idx ? 'collapsed' : 'expanded'}: ${brief.title}`);
+                  setSelectedBrief(selectedBrief === idx ? null : idx);
+                }}
               >
                 <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
                   <div className="flex items-center space-x-4 mb-4 md:mb-0">
@@ -69,7 +72,7 @@ const RegulatoryInsight: React.FC = () => {
                   <span className="text-[10px] uppercase tracking-widest font-bold text-gold">{brief.jurisdiction}</span>
                 </div>
                 
-                <h2 className="text-3xl font-serif text-navy mb-6 cursor-pointer group-hover:text-gold transition-colors">{brief.title}</h2>
+                <h2 className="text-3xl font-serif text-navy mb-6 cursor-pointer hover:text-gold transition-colors">{brief.title}</h2>
                 
                 <div className={`overflow-hidden transition-all duration-700 ${selectedBrief === idx ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
                   <div className="prose prose-slate max-w-none pt-6 border-t border-gray-100">
@@ -77,13 +80,13 @@ const RegulatoryInsight: React.FC = () => {
                       {brief.content}
                     </p>
                     <div className="flex justify-end">
-                      <button className="text-[10px] uppercase tracking-[0.2em] font-bold text-navy hover:text-gold border-b border-navy/20 pb-1">Request Full Memo Access</button>
+                      <button onClick={() => console.log(`📄 Requesting: ${brief.title} full memo`)} className="text-[10px] uppercase tracking-[0.2em] font-bold text-navy hover:text-gold hover:shadow-md hover:shadow-gold/40 border-b border-navy/20 hover:border-gold pb-1 transition-all">Request Full Memo Access</button>
                     </div>
                   </div>
                 </div>
                 
                 {selectedBrief !== idx && (
-                  <button className="text-[10px] uppercase tracking-[0.2em] font-bold text-navy border-b border-navy/20 pb-1 mt-4">Expand Abstract &rarr;</button>
+                  <button onClick={() => console.log(`👁️ Expanding abstract: ${brief.title}`)} className="text-[10px] uppercase tracking-[0.2em] font-bold text-navy hover:text-gold hover:shadow-md hover:shadow-gold/40 border-b border-navy/20 hover:border-gold pb-1 mt-4 transition-all">Expand Abstract &rarr;</button>
                 )}
               </div>
             ))}
