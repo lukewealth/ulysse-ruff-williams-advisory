@@ -5,11 +5,11 @@
 // REFERENCE: https://dev.wix.com/docs/velo/events-service-plugins/crm/events/introduction
 // ============================================================================
 
-import { ok, badRequest, forbidden, serverError } from 'wix-http-functions';
-import wixUsers from 'wix-users-backend';
-import wixData from 'wix-data';
-import wixAuth from 'wix-auth';
-import jwt from 'jwt-simple';
+const { ok, badRequest, forbidden, serverError } = require('wix-http-functions');                 │
+const wixUsers = require('wix-users-backend');                                                    │
+const wixData = require('wix-data');                                                              │
+const wixAuth = require('wix-auth');                                                              │
+const jwt = require('jwt-simple');                                                                │                                   
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 const VERCEL_API_URL = process.env.VERCEL_API_URL || 'https://your-vercel-domain.vercel.app';
